@@ -231,7 +231,6 @@ jQuery.exposed = {
 	 */
 	onHashChange: function(ev) {
 		var x = jQuery.exposed.routeCurrentPath();
-		console.log('routeCurrentPath =>', x);
 		jQuery.exposed.triggerRoute(x);
 	},
 	
