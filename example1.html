@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>jQuery.expose — example 1</title>
+		<script src="jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="jquery.expose.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" charset="utf-8">
+			// generic HTML escape function:
+			function h(s) {return String(s).replace(/&/g, '&#38;').replace(/</g, '&#60;').replace(/>/g, '&#62;').replace(/"/g, '&#34;').replace(/'/g, '&#39;');}
+			
+			// app start:
+			$(function(){
+				$('view.error404').expose('404', function(){
+					$(this).find('p').html('<code>#'+h($.exposed.path)+'</code> not found');
+				});
+				
+				$('view#home').expose('');
+				
+				$('view#about').expose('about', function(){
+					$(this).find('p.message').text('You arrived at '+(new Date()));
+				});
+				
+				$('view#something').expose(/^something:(.+)/, function(arg1){
+					$(this).find('p.message').text('Received argument: '+arg1);
+				});
+				
+				$.expose(/^alert:(.+)$/, function(message){
+					alert(message);
+				});
+				
+				// Fix to avoid jumps when moving to Home (#)
+				$('a[href=#]').click(function(clickev){
+					$(document).one('scroll', function(ev){
+						//console.log(ev, ev.eventPhase, ev.timeStamp);
+						$(document).scrollTop(0);
+						ev.preventDefault();
+						ev.stopImmediatePropagation();
+						ev.stopPropagation();
+					});
+				});
+				
+				$.expose();
+			});
+		</script>
+		<style type="text/css" media="screen">
+			view { display:none; }
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>My awesome site</h1>
+		</header>
+		<view id="home">
+			<h2>Home</h2>
+			<p>This is home</p>
+			<p>Go to <a href="#about">about</a> or something <a href="#something:crazy,cat,lady">else</a>.</p>
+		</view>
+		<view id="about">
+			<h2>About</h2>
+			<p class="message"></p>
+			<p>Go back to <a href="#">home</a> or something <a href="#something:hello">else</a>.</p>
+		</view>
+		<view id="something">
+			<h2>Something else</h2>
+			<p class="message"></p>
+			<p>Go back to <a href="#">home</a>.</p>
+			<p>Or <a href="#alert:hello%20world">show a message</a>, but stay here.</p>
+		</view>
+		<view class="error404">
+			<h1>404</h1>
+			<p></p>
+		</view>
+		<footer>
+			<hr>
+			<address>Leslie Bulgur</address>
+		</footer>
+	</body>
+</html>
