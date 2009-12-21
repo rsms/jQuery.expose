@@ -33,7 +33,7 @@ jQuery.expose = function(path, handler, add_switch_handler) {
 	}
 	else {
 		// expose a handler without attaching it to an element
-		if (typeof path !== 'string' && jQuery.exposed._isRegExpObject(path) === false)
+		if (typeof path !== 'string' && path.constructor !== RegExp)
 			throw new Error('first argument to jQuery.expose must be a string or a RegExp object');
 		if (typeof handler !== 'function')
 			throw new Error('second argument to jQuery.expose must be a function');
@@ -91,13 +91,11 @@ jQuery.exposed = {
 	
 		// add path and handler
 		var did_set_path = false;
-		if (typeof path === 'function' && typeof path.test !== 'function') {
+		if (typeof path === 'function' && path.constructor !== RegExp) {
 			entry.handlers.push(function(){ return path.call(elem); });
 		}
-		else {
-			if (path !== undefined && 
-			    (typeof path === 'string' || typeof path.test === 'function'))
-			{
+		else if (path !== undefined) {
+			if (typeof path === 'string' || path.constructor === RegExp) {
 				did_set_path = true;
 				if (typeof path === 'string')
 					path = path.replace(/^#/, '');
@@ -127,10 +125,6 @@ jQuery.exposed = {
 			entry.handlers.push(jQuery.exposed.switchHandler);
 		
 		return entry;
-	},
-	
-	_isRegExpObject: function(x) {
-		return (typeof x === 'function' && typeof x.test === 'function');
 	},
 	
 	/**
