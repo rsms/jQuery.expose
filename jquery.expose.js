@@ -149,7 +149,7 @@ jQuery.exposed = {
 			else
 				q = q.add(r.element);
 		}
-		q = q.filter(':visible');
+		q = q.filter(':visible').not(this);
 		if (q.length) {
 			var inelem = this;
 			q.fadeOut(100, function(){
